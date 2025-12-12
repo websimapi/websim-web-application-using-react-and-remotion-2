@@ -78,7 +78,6 @@ function BingoCage({ width = 560, height = 420, tappable = true }) {
     scene.add(new THREE.AmbientLight(16777215, 0.6));
     const cageGroup = new THREE.Group();
     cageGroup.position.y = 80;
-    cageGroup.rotation.z = Math.PI * 0.08;
     scene.add(cageGroup);
     const R = 120;
     const frameMat = new THREE.MeshStandardMaterial({
@@ -122,40 +121,37 @@ function BingoCage({ width = 560, height = 420, tappable = true }) {
     );
     handleKnob.position.set(R + 65, 0, 0);
     cageGroup.add(handleKnob);
-    const wireMat = new THREE.LineBasicMaterial({ color: 6710886 });
+    const barMat = new THREE.MeshStandardMaterial({
+      color: 6710886,
+      metalness: 0.7,
+      roughness: 0.35
+    });
     const wireGroup = new THREE.Group();
-    const latRings = 9;
+    const latRings = 7;
     const lonRings = 12;
     const segments = 80;
+    const barRadius = R * 0.04;
     for (let i = 0; i < latRings; i++) {
       const v = i / (latRings - 1) * Math.PI - Math.PI / 2;
       const y = Math.sin(v) * R;
       const rAtLat = Math.cos(v) * R;
-      const points = [];
-      for (let s = 0; s < segments; s++) {
-        const a = s / segments * Math.PI * 2;
-        const x = Math.cos(a) * rAtLat;
-        const z = Math.sin(a) * rAtLat;
-        points.push(new THREE.Vector3(x, y, z));
-      }
-      const lineGeom = new THREE.BufferGeometry().setFromPoints(points);
-      const line = new THREE.LineLoop(lineGeom, wireMat);
-      wireGroup.add(line);
+      if (rAtLat <= 0) continue;
+      const torus = new THREE.Mesh(
+        new THREE.TorusGeometry(rAtLat, barRadius, 12, segments),
+        barMat
+      );
+      torus.position.y = y;
+      wireGroup.add(torus);
     }
     for (let i = 0; i < lonRings; i++) {
       const phi = i / lonRings * Math.PI * 2;
-      const points = [];
-      for (let s = 0; s < segments; s++) {
-        const t = s / segments * Math.PI - Math.PI / 2;
-        const y = Math.sin(t) * R;
-        const rAtLat = Math.cos(t) * R;
-        const x = Math.cos(phi) * rAtLat;
-        const z = Math.sin(phi) * rAtLat;
-        points.push(new THREE.Vector3(x, y, z));
-      }
-      const lineGeom = new THREE.BufferGeometry().setFromPoints(points);
-      const line = new THREE.LineLoop(lineGeom, wireMat);
-      wireGroup.add(line);
+      const torus = new THREE.Mesh(
+        new THREE.TorusGeometry(R, barRadius, 12, segments),
+        barMat
+      );
+      torus.rotation.x = Math.PI / 2;
+      torus.rotation.y = phi;
+      wireGroup.add(torus);
     }
     wireGroup.rotation.y = Math.PI / 6;
     cageGroup.add(wireGroup);
@@ -336,13 +332,13 @@ function BingoCage({ width = 560, height = 420, tappable = true }) {
     false,
     {
       fileName: "<stdin>",
-      lineNumber: 426,
+      lineNumber: 425,
       columnNumber: 7
     },
     this
   ) }, void 0, false, {
     fileName: "<stdin>",
-    lineNumber: 425,
+    lineNumber: 424,
     columnNumber: 5
   }, this);
 }
@@ -403,16 +399,16 @@ function InteractiveApp() {
     }, children: [
       /* @__PURE__ */ jsxDEV("div", { style: { width: 560, height: 420, display: "flex", justifyContent: "center", alignItems: "center", marginBottom: 12 }, children: /* @__PURE__ */ jsxDEV(BingoCage, { width: 520, height: 360 }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 504,
+        lineNumber: 503,
         columnNumber: 15
       }, this) }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 503,
+        lineNumber: 502,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV(HeaderSmall, {}, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 507,
+        lineNumber: 506,
         columnNumber: 13
       }, this),
       /* @__PURE__ */ jsxDEV("div", { style: { display: "grid", gridTemplateColumns: "repeat(5, 92px)", gap: 8, justifyContent: "center", marginTop: 6 }, children: exampleCard.map(
@@ -451,12 +447,12 @@ function InteractiveApp() {
                   zIndex: 0
                 } }, void 0, false, {
                   fileName: "<stdin>",
-                  lineNumber: 536,
+                  lineNumber: 535,
                   columnNumber: 25
                 }, this),
                 /* @__PURE__ */ jsxDEV("div", { style: { zIndex: 1, fontSize: 20 }, children: isFree ? "FREE" : cell }, void 0, false, {
                   fileName: "<stdin>",
-                  lineNumber: 546,
+                  lineNumber: 545,
                   columnNumber: 23
                 }, this)
               ]
@@ -465,7 +461,7 @@ function InteractiveApp() {
             true,
             {
               fileName: "<stdin>",
-              lineNumber: 514,
+              lineNumber: 513,
               columnNumber: 21
             },
             this
@@ -473,20 +469,20 @@ function InteractiveApp() {
         })
       ) }, void 0, false, {
         fileName: "<stdin>",
-        lineNumber: 508,
+        lineNumber: 507,
         columnNumber: 13
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 490,
+      lineNumber: 489,
       columnNumber: 11
     }, this) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 478,
+      lineNumber: 477,
       columnNumber: 9
     }, this) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 476,
+      lineNumber: 475,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { style: { width: 360, height: 640, display: "flex", alignItems: "center", justifyContent: "center" }, children: /* @__PURE__ */ jsxDEV("div", { style: { width: "100%", height: "100%", boxSizing: "border-box", borderRadius: 12, overflow: "hidden", boxShadow: "0 12px 36px rgba(0,0,0,0.12)" }, children: /* @__PURE__ */ jsxDEV(
@@ -507,17 +503,17 @@ function InteractiveApp() {
       false,
       {
         fileName: "<stdin>",
-        lineNumber: 561,
+        lineNumber: 560,
         columnNumber: 11
       },
       this
     ) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 560,
+      lineNumber: 559,
       columnNumber: 9
     }, this) }, void 0, false, {
       fileName: "<stdin>",
-      lineNumber: 559,
+      lineNumber: 558,
       columnNumber: 7
     }, this),
     /* @__PURE__ */ jsxDEV("div", { style: { width: 360, boxSizing: "border-box", padding: 12, display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 12 }, children: [
@@ -536,7 +532,7 @@ function InteractiveApp() {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 580,
+            lineNumber: 579,
             columnNumber: 11
           },
           this
@@ -552,45 +548,45 @@ function InteractiveApp() {
           false,
           {
             fileName: "<stdin>",
-            lineNumber: 586,
+            lineNumber: 585,
             columnNumber: 11
           },
           this
         )
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 579,
+        lineNumber: 578,
         columnNumber: 9
       }, this),
       /* @__PURE__ */ jsxDEV("div", { style: { width: "100%", fontSize: 12 }, children: [
         /* @__PURE__ */ jsxDEV("div", { style: { fontWeight: 700, marginBottom: 6 }, children: "Recorded actions JSON" }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 595,
+          lineNumber: 594,
           columnNumber: 11
         }, this),
         /* @__PURE__ */ jsxDEV("pre", { style: { whiteSpace: "pre-wrap", wordBreak: "break-word", background: "#f7f7f7", padding: 8, borderRadius: 6, maxHeight: 420, overflow: "auto" }, children: JSON.stringify(actions, null, 2) }, void 0, false, {
           fileName: "<stdin>",
-          lineNumber: 596,
+          lineNumber: 595,
           columnNumber: 11
         }, this)
       ] }, void 0, true, {
         fileName: "<stdin>",
-        lineNumber: 594,
+        lineNumber: 593,
         columnNumber: 9
       }, this)
     ] }, void 0, true, {
       fileName: "<stdin>",
-      lineNumber: 578,
+      lineNumber: 577,
       columnNumber: 7
     }, this)
   ] }, void 0, true, {
     fileName: "<stdin>",
-    lineNumber: 474,
+    lineNumber: 473,
     columnNumber: 5
   }, this);
 }
 createRoot(document.getElementById("app")).render(/* @__PURE__ */ jsxDEV(InteractiveApp, {}, void 0, false, {
   fileName: "<stdin>",
-  lineNumber: 605,
+  lineNumber: 604,
   columnNumber: 51
 }));
